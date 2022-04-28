@@ -17,10 +17,12 @@ spec = do
 testIsCorrectSize :: Spec
 testIsCorrectSize =
     describe "isCorrectSize" $
-    it "returns True if the given has a width-to-height ratio of 1:5, and an even width." $
-    isCorrectSize correctSize `shouldBe` True
+    it "returns True if the given has a width-to-height ratio of 1:5, and an even width." $ do
+        isCorrectSize correctSize `shouldBe` True
+        isCorrectSize oddWidth `shouldBe` False
   where
     correctSize = generateBlackImage 2 10
+    oddWidth = generateBlackImage 1 5
 
 testIsImage1x5Size :: Spec
 testIsImage1x5Size =
