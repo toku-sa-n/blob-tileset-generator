@@ -38,11 +38,13 @@ testIsWidthMoreThanOrEqualTo4 =
 
 testIsWidthEven :: Spec
 testIsWidthEven =
-    describe "isWidthEven" $
-    it "returns True if the width of the given image is even." $
-    isWidthEven correctWidth `shouldBe` True
+    describe "isWidthEven" $ do
+        it "returns True if the width of the given image is even." $
+            isWidthEven correctWidth `shouldBe` True
+        it "returns False otherwise" $ isWidthEven evenWidth `shouldBe` False
   where
     correctWidth = generateBlackImage 4 1
+    evenWidth = generateBlackImage 1 1
 
 generateBlackImage :: Int -> Int -> Image PixelRGB8
 generateBlackImage = generateImage (\_ _ -> PixelRGB8 0 0 0)
