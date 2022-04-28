@@ -41,8 +41,8 @@ splitImage img
         Tile1x5 (head parts) (parts !! 1) (parts !! 2) (parts !! 3) (parts !! 4)
     | otherwise = Nothing
   where
-    parts = fmap (\y -> crop 0 y w w img) topCoord
-    topCoord = take 5 [0,w ..]
+    parts = fmap (\y -> crop 0 y w w img) topYCoord
+    topYCoord = take 5 [0,w ..]
     w = imageWidth img
 
 fromPartsUnchecked ::
