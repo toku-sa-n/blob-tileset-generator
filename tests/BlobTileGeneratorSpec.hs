@@ -20,16 +20,16 @@ testSplitImage =
     it "returns a Just value including the Tile1x5 type value containing images separated into 5. if the image has a correct size." $
     splitImage correctTileFile == Just expected
   where
-    correctTileFile =
-        below [redTile, blueTile, greenTile, yellowTile, blackTile]
+    correctTileFile = below tiles
     expected =
-        fromPartsUnchecked redTile blueTile greenTile yellowTile blackTile
-    redTile = pixelToTile 255 0 0
-    blueTile = pixelToTile 0 0 255
-    greenTile = pixelToTile 0 255 0
-    yellowTile = pixelToTile 255 255 0
-    blackTile = pixelToTile 0 0 0
-    pixelToTile r g b = generateImage (\_ _ -> PixelRGB8 r g b) 2 2
+        fromPartsUnchecked
+            (head tiles)
+            (tiles !! 1)
+            (tiles !! 2)
+            (tiles !! 3)
+            (tiles !! 4)
+    tiles = fmap blueToTile [0 .. 4]
+    blueToTile b = generateImage (\_ _ -> PixelRGB8 0 0 b) 2 2
 
 testIsCorrectSize :: Spec
 testIsCorrectSize =
