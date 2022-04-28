@@ -24,11 +24,12 @@ testSplitImage =
         below [redTile, blueTile, greenTile, yellowTile, blackTile]
     expected =
         fromPartsUnchecked redTile blueTile greenTile yellowTile blackTile
-    redTile = generateImage (\_ _ -> PixelRGB8 255 0 0) 2 2
-    blueTile = generateImage (\_ _ -> PixelRGB8 0 0 255) 2 2
-    greenTile = generateImage (\_ _ -> PixelRGB8 0 255 0) 2 2
-    yellowTile = generateImage (\_ _ -> PixelRGB8 255 255 0) 2 2
-    blackTile = generateImage (\_ _ -> PixelRGB8 0 0 0) 2 2
+    redTile = pixelToTile 255 0 0
+    blueTile = pixelToTile 0 0 255
+    greenTile = pixelToTile 0 255 0
+    yellowTile = pixelToTile 255 255 0
+    blackTile = pixelToTile 0 0 0
+    pixelToTile r g b = generateImage (\_ _ -> PixelRGB8 r g b) 2 2
 
 testIsCorrectSize :: Spec
 testIsCorrectSize =
