@@ -1,6 +1,12 @@
 module Main
-  ( main
-  ) where
+    ( main
+    ) where
+
+import qualified BlobTileGeneratorSpec
+import           Test.Hspec            (Spec, describe, hspec)
 
 main :: IO ()
-main = return ()
+main = hspec spec
+
+spec :: Spec
+spec = describe "BlobTileGenerator" BlobTileGeneratorSpec.spec

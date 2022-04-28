@@ -17,6 +17,9 @@ Test-Suite spec
     import:             common
     type:               exitcode-stdio-1.0
     main-is:            Main.hs
+    other-modules:      BlobTileGeneratorSpec
+    build-depends:      blob-tile-generator
+                      , hspec >= 2.9.1 && < 2.10
     hs-source-dirs:     tests
     default-Language:   Haskell2010
 
