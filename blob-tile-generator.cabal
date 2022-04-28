@@ -11,7 +11,9 @@ extra-source-files:
 
 common common
     build-depends:  base >= 4.14.3 && < 4.15
+                  , lens >= 5.1 && < 5.2
                   , JuicyPixels >= 3.3.7 && < 3.4
+                  , JuicyPixels-extra >= 0.5.2 && < 0.6
     ghc-options:    -Wall -Werror
 
 Test-Suite spec
