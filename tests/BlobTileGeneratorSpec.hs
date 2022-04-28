@@ -8,11 +8,7 @@ import           Test.Hspec        (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do
-    describe "isImage1x5Size" $ do
-        it "returns True if the given image has a width-to-height ratio of 1:5." $
-            isImage1x5Size correctRatio `shouldBe` True
-        it "returns False otherwise" $
-            isImage1x5Size incorrectRatio `shouldBe` False
+    testIsImage1x5Size
     describe "isWidthMoreThanOrEqualTo4" $ do
         it
             "returns True if the width of the given image is more than or equal to 4." $
@@ -22,6 +18,15 @@ spec = do
   where
     enoughWidth = generateBlackImage 5 1
     notEnoughWidth = generateBlackImage 3 8
+
+testIsImage1x5Size :: Spec
+testIsImage1x5Size =
+    describe "isImage1x5Size" $ do
+        it "returns True if the given image has a width-to-height ratio of 1:5." $
+            isImage1x5Size correctRatio `shouldBe` True
+        it "returns False otherwise" $
+            isImage1x5Size incorrectRatio `shouldBe` False
+  where
     correctRatio = generateBlackImage 1 5
     incorrectRatio = generateBlackImage 2 5
 
