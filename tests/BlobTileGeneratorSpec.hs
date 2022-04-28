@@ -7,6 +7,7 @@ import           BlobTileGenerator   (fromPartsUnchecked, isCorrectSize,
 import           Codec.Picture       (Image, PixelRGB8 (PixelRGB8),
                                       generateImage)
 import           Codec.Picture.Extra (below)
+import           Data.Maybe          (isNothing)
 import           Test.Hspec          (Spec, describe, it, shouldBe)
 
 spec :: Spec
@@ -16,9 +17,12 @@ spec = do
 
 testSplitImage :: Spec
 testSplitImage =
-    describe "tile1x5" $
-    it "returns a Just value including the Tile1x5 type value containing images separated into 5. if the image has a correct size." $
-    splitImage correctTileFile == Just expected
+    describe "tile1x5" $ do
+        it
+            "returns a Just value including the Tile1x5 type value containing images separated into 5. if the image has a correct size." $
+            splitImage correctTileFile == Just expected
+        it "returns a Nothing if the given tile has an incorrect size." $
+            isNothing $ splitImage (generateBlackImage 2 9)
   where
     correctTileFile = below tiles
     expected =
