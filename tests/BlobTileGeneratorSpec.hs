@@ -13,12 +13,15 @@ spec = do
             isImage1x5Size correctRatio `shouldBe` True
         it "returns False otherwise" $
             isImage1x5Size incorrectRatio `shouldBe` False
-    describe "isWidthMoreThanOrEqualTo4" $
+    describe "isWidthMoreThanOrEqualTo4" $ do
         it
             "returns True if the width of the given image is more than or equal to 4." $
-        isWidthMoreThanOrEqualTo4 enoughWidth `shouldBe` True
+            isWidthMoreThanOrEqualTo4 enoughWidth `shouldBe` True
+        it "returns False otherwise" $
+            isWidthMoreThanOrEqualTo4 notEnoughWidth `shouldBe` False
   where
     enoughWidth = generateBlackImage 5 1
+    notEnoughWidth = generateBlackImage 3 8
     correctRatio = generateBlackImage 1 5
     incorrectRatio = generateBlackImage 2 5
 
