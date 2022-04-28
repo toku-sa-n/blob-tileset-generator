@@ -1,0 +1,136 @@
+name: Haskell CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+
+    strategy:
+      matrix:
+        sys:
+        - { os: ubuntu-latest, shell: bash }
+        - { os: windows-latest, shell: 'msys2 {0}' }
+
+    runs-on: ${{ matrix.sys.os }}
+
+    defaults:
+      run:
+        shell: ${{ matrix.sys.shell }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: base-devel
+      if: runner.os == 'Windows'
+
+    - uses: haskell/actions/setup@v1
+      id: haskell_setup
+      with:
+        ghc-version: '8.10.7'
+        cabal-version: '3.6.0.0'
+
+    # Adding a path to msys2's PATH on GitHub Actions is pretty troublesome. So I'll output the path to a file.
+    # (See https://github.com/msys2/setup-msys2/issues/98 to how to add a path to PATH.)
+    #
+    # Somehow a configure script can't find grep, so I specify the its path explicitly.
+    # See https://stackoverflow.com/questions/71891129/the-configure-script-cant-find-grep-on-windows-on-github-actions.
+    - name: Store the path to Cabal (Windows)
+      run: |
+        echo "GREP=$(which grep) $(cygpath --unix '${{ steps.haskell_setup.outputs.cabal-exe }}') "'$@ '"-w $(cygpath --unix '${{ steps.haskell_setup.outputs.ghc-exe }}')" > cabal.sh
+        chmod +x cabal.sh
+      if: runner.os == 'Windows'
+
+    - name: Store the path to Cabal (Linux)
+      run: |
+        echo '${{ steps.haskell_setup.outputs.cabal-exe }} $@' > cabal.sh
+        chmod +x cabal.sh
+      if: runner.os == 'Linux'
+
+    - name: Cache
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-cabal
+      with:
+        path: |
+          ~/.cabal/packages
+          ~/.cabal/store
+          dist-newstyle
+        key: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}-${{ github.sha }}
+        restore-keys: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}
+
+    - name: Update Cabal
+      run: ./cabal.sh update
+
+    - name: Build
+      run: ./cabal.sh build --enable-tests --enable-benchmarks all -j
+
+    - name: Run tests
+      run: ./cabal.sh test all -j
+
+  format_and_lint:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: haskell/actions/setup@v1
+      with:
+        ghc-version: '8.10.7'
+        cabal-version: '3.6.0.0'
+
+    - name: Cache
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-cabal
+      with:
+        path: |
+          ~/.cabal/packages
+          ~/.cabal/store
+          dist-newstyle
+        key: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}-${{ github.sha }}
+        restore-keys: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}
+
+    - name: Update the PATH environment variable
+      run: echo "$HOME/.cabal/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install moreutils
+
+        cabal update -j
+
+        # See https://tokuchan3515.hatenablog.com/entry/2022/03/26/133158 why we separate `cabal install`s.
+        cabal install weeder -j -z
+        cabal install hindent -j -z
+        cabal install stylish-haskell -j -z
+
+    - name: Generate `cabal.project.local` for `weeder`
+      run: "echo \"package * \n  ghc-options: -fwrite-ide-info\" > cabal.project.local"
+
+    - name: Detect unused lines
+      run: |
+        cabal clean # This is necessary to run `weeder` correctly. See https://hackage.haskell.org/package/weeder.
+        weeder
+
+    - name: Set up HLint
+      uses: haskell/actions/hlint-setup@v1
+
+    - name: Run HLint
+      uses: haskell/actions/hlint-run@v1
+      with:
+        path: '["src/", "tests/", "app/"]'
+        fail-on: warning
+
+    - name: Check format
+      run: ./formatter.sh --check
+
+
