@@ -2,16 +2,25 @@ module BlobTileGeneratorSpec
     ( spec
     ) where
 
-import           BlobTileGenerator (isImage1x5Size, isWidthEven,
+import           BlobTileGenerator (isCorrectSize, isImage1x5Size, isWidthEven,
                                     isWidthMoreThanOrEqualTo4)
 import           Codec.Picture     (Image, PixelRGB8 (PixelRGB8), generateImage)
 import           Test.Hspec        (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do
+    testIsCorrectSize
     testIsImage1x5Size
     testIsWidthMoreThanOrEqualTo4
     testIsWidthEven
+
+testIsCorrectSize :: Spec
+testIsCorrectSize =
+    describe "isCorrectSize" $
+    it "returns True if the given has a width-to-height ratio of 1:5, and an even width." $
+    isCorrectSize correctSize `shouldBe` True
+  where
+    correctSize = generateBlackImage 2 10
 
 testIsImage1x5Size :: Spec
 testIsImage1x5Size =
