@@ -52,32 +52,38 @@ testIsCorrectSize =
 
 testIndexToTileTypes :: Spec
 testIndexToTileTypes =
-    describe "indexToTileTypes" $
-    it "returns a Just value containing tile types of each corner" $ do
-        indexToTileTypes 85 `shouldBe`
-            Just
-                (fromTypesUnchecked
-                     CornerInside
-                     CornerInside
-                     CornerInside
-                     CornerInside)
-        indexToTileTypes 255 `shouldBe`
-            Just (fromTypesUnchecked NoBorder NoBorder NoBorder NoBorder)
-        indexToTileTypes 17 `shouldBe`
-            Just (fromTypesUnchecked Vertical Vertical Vertical Vertical)
-        indexToTileTypes 5 `shouldBe`
-            Just
-                (fromTypesUnchecked
-                     Vertical
-                     CornerInside
-                     CornerOutside
-                     Horizontal)
-        indexToTileTypes 68 `shouldBe`
-            Just
-                (fromTypesUnchecked Horizontal Horizontal Horizontal Horizontal)
-        indexToTileTypes 29 `shouldBe`
-            Just (fromTypesUnchecked Vertical CornerInside Vertical NoBorder)
-        indexToTileTypes 334 `shouldBe` Nothing
+    describe "indexToTileTypes" $ do
+        it "returns a Just value containing tile types of each corner" $ do
+            indexToTileTypes 85 `shouldBe`
+                Just
+                    (fromTypesUnchecked
+                         CornerInside
+                         CornerInside
+                         CornerInside
+                         CornerInside)
+            indexToTileTypes 255 `shouldBe`
+                Just (fromTypesUnchecked NoBorder NoBorder NoBorder NoBorder)
+            indexToTileTypes 17 `shouldBe`
+                Just (fromTypesUnchecked Vertical Vertical Vertical Vertical)
+            indexToTileTypes 5 `shouldBe`
+                Just
+                    (fromTypesUnchecked
+                         Vertical
+                         CornerInside
+                         CornerOutside
+                         Horizontal)
+            indexToTileTypes 68 `shouldBe`
+                Just
+                    (fromTypesUnchecked
+                         Horizontal
+                         Horizontal
+                         Horizontal
+                         Horizontal)
+            indexToTileTypes 29 `shouldBe`
+                Just
+                    (fromTypesUnchecked Vertical CornerInside Vertical NoBorder)
+        it "returns a Nothing value if the index is invalid." $
+            indexToTileTypes 334 `shouldBe` Nothing
 
 incorrectSizeImages :: [Image PixelRGB8]
 incorrectSizeImages = [oddWidth, incorrectRatio]
