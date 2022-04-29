@@ -26,32 +26,18 @@ data TileType
     | NoBorder
     deriving (Show, Eq)
 
-data TileTypesOfCorners =
-    TileTypesOfCorners
-        { _northWestType :: TileType
-        , _northEastType :: TileType
-        , _southWestType :: TileType
-        , _southEastType :: TileType
+data Corners a =
+    Corners
+        { _northWest :: a
+        , _northEast :: a
+        , _southWest :: a
+        , _southEast :: a
         }
     deriving (Show, Eq)
 
--- makeLenses ''TileTypesOfCorners
-data TileSplitIntoFourDirections a =
-    TileSplitIntoFourDirections
-        { _northWest :: Image a
-        , _northEast :: Image a
-        , _southWest :: Image a
-        , _southEast :: Image a
-        }
+type TileTypesOfCorners = Corners TileType
 
-makeLenses ''TileSplitIntoFourDirections
-
-instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
-         Eq (TileSplitIntoFourDirections a) where
-    t1 == t2 =
-        t1 ^. northWest == t2 ^. northWest &&
-        t1 ^. northEast == t2 ^. northEast &&
-        t1 ^. southWest == t2 ^. southWest && t1 ^. southEast == t2 ^. southEast
+type TileSplitIntoFourDirections a = Corners (Image a)
 
 data Tile1x5 a =
     Tile1x5
@@ -75,7 +61,7 @@ instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
 
 fromTypesUnchecked ::
        TileType -> TileType -> TileType -> TileType -> TileTypesOfCorners
-fromTypesUnchecked = TileTypesOfCorners
+fromTypesUnchecked = Corners
 
 indexToTileTypes :: Int -> Maybe TileTypesOfCorners
 indexToTileTypes index
@@ -83,7 +69,7 @@ indexToTileTypes index
         case fmap baseIndexType baseIndexes of
             [a, b, c, d] ->
                 Just $
-                TileTypesOfCorners
+                Corners
                     (convertHorizontalVertical d)
                     a
                     c
@@ -144,7 +130,7 @@ fromPartsUnchecked n v h i a = Tile1x5 n' v' h' i' a'
 
 tileSplitIntoFourDirections ::
        Pixel a => Image a -> TileSplitIntoFourDirections a
-tileSplitIntoFourDirections img = TileSplitIntoFourDirections nw ne sw se
+tileSplitIntoFourDirections img = Corners nw ne sw se
   where
     nw = cropToQuarter 0 0
     ne = cropToQuarter 0 wHalf
