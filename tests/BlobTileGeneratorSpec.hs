@@ -29,15 +29,12 @@ testSplitImage =
         it "returns a Nothing if the given tile has an incorrect size." $
             and $ fmap (isNothing . splitImage) incorrectSizeImages
   where
-    correctTileFile = below tiles
-    expected =
-        fromPartsUnchecked
-            (head tiles)
-            (tiles !! 1)
-            (tiles !! 2)
-            (tiles !! 3)
-            (tiles !! 4)
-    tiles = fmap blueToTile [0 .. 4]
+    correctTileFile = below [t1, t2, t3, t4, t5]
+    expected = fromPartsUnchecked t1 t2 t3 t4 t5
+    (t1, t2, t3, t4, t5) =
+        case fmap blueToTile [0 .. 4] of
+            [a, b, c, d, e] -> (a, b, c, d, e)
+            _               -> error "Unexpected list length"
     blueToTile b = generateImage (\_ _ -> PixelRGB8 0 0 b) 2 2
 
 testIsCorrectSize :: Spec
