@@ -16,7 +16,6 @@ import           Codec.Picture       (Image (Image, imageHeight, imageWidth),
 import           Codec.Picture.Extra (crop)
 import           Control.Lens        (makeLenses, (^.))
 import           Data.Bits           (Bits (bit, (.&.)))
-import           Debug.Trace         (trace)
 import           Foreign             (Storable)
 
 data TileType
@@ -83,7 +82,6 @@ indexToTileTypes index
     | index `elem` validIndexes =
         case fmap baseIndexType baseIndexes of
             [a, b, c, d] ->
-                trace (show tileExists) $
                 Just $
                 TileTypesOfCorners
                     (convertHorizontalVertical d)
