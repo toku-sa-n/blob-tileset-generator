@@ -1,4 +1,3 @@
-{-# LANGUAGE TemplateHaskell      #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module BlobTileGenerator
@@ -16,7 +15,6 @@ module BlobTileGenerator
 import           Codec.Picture       (Image (Image, imageWidth),
                                       Pixel (PixelBaseComponent), PixelRGBA8)
 import           Codec.Picture.Extra (below, beside, crop)
-import           Control.Lens        (makeLenses, (^.))
 import           Data.Bits           (Bits (bit, (.&.)))
 import           Data.Maybe          (fromMaybe)
 import           Foreign             (Storable)
@@ -59,16 +57,18 @@ data Tile1x5 a =
         , _allConnection        :: TileSplitIntoFourDirections a
         }
 
-makeLenses ''Tile1x5
-
 instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
          Eq (Tile1x5 a) where
     t1 == t2 =
-        t1 ^. noConnection == t2 ^. noConnection &&
-        t1 ^. verticalConnection == t2 ^. verticalConnection &&
-        t1 ^. horizontalConnection == t2 ^. horizontalConnection &&
-        t1 ^. innerCorner == t2 ^. innerCorner &&
-        t1 ^. allConnection == t2 ^. allConnection
+        and $
+        fmap
+            (\x -> x t1 == x t2)
+            [ _noConnection
+            , _verticalConnection
+            , _horizontalConnection
+            , _innerCorner
+            , _allConnection
+            ]
 
 fromTypesUnchecked ::
        TileType -> TileType -> TileType -> TileType -> TileTypesOfCorners
