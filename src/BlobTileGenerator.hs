@@ -150,11 +150,10 @@ fromPartsUnchecked ::
     -> Tile1x5 a
 fromPartsUnchecked n v h i a = Tile1x5 n' v' h' i' a'
   where
-    n' = tileSplitIntoFourDirections n
-    v' = tileSplitIntoFourDirections v
-    h' = tileSplitIntoFourDirections h
-    i' = tileSplitIntoFourDirections i
-    a' = tileSplitIntoFourDirections a
+    (n', v', h', i', a') =
+        case fmap tileSplitIntoFourDirections [n, v, h, i, a] of
+            [p, q, r, s, t] -> (p, q, r, s, t)
+            _               -> error "Unexpected length of list."
 
 tileSplitIntoFourDirections ::
        Pixel a => Image a -> TileSplitIntoFourDirections a
