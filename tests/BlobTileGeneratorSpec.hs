@@ -54,36 +54,17 @@ testIndexToTileTypes :: Spec
 testIndexToTileTypes =
     describe "indexToTileTypes" $ do
         it "returns a Just value containing tile types of each corner" $ do
-            indexToTileTypes 85 `shouldBe`
-                Just
-                    (fromTypesUnchecked
-                         CornerInside
-                         CornerInside
-                         CornerInside
-                         CornerInside)
-            indexToTileTypes 255 `shouldBe`
-                Just (fromTypesUnchecked NoBorder NoBorder NoBorder NoBorder)
-            indexToTileTypes 17 `shouldBe`
-                Just (fromTypesUnchecked Vertical Vertical Vertical Vertical)
-            indexToTileTypes 5 `shouldBe`
-                Just
-                    (fromTypesUnchecked
-                         Vertical
-                         CornerInside
-                         CornerOutside
-                         Horizontal)
-            indexToTileTypes 68 `shouldBe`
-                Just
-                    (fromTypesUnchecked
-                         Horizontal
-                         Horizontal
-                         Horizontal
-                         Horizontal)
-            indexToTileTypes 29 `shouldBe`
-                Just
-                    (fromTypesUnchecked Vertical CornerInside Vertical NoBorder)
+            success 85 CornerInside CornerInside CornerInside CornerInside
+            success 255 NoBorder NoBorder NoBorder NoBorder
+            success 17 Vertical Vertical Vertical Vertical
+            success 5 Vertical CornerInside CornerOutside Horizontal
+            success 68 Horizontal Horizontal Horizontal Horizontal
+            success 29 Vertical CornerInside Vertical NoBorder
         it "returns a Nothing value if the index is invalid." $
             indexToTileTypes 334 `shouldBe` Nothing
+  where
+    success index nw ne sw se =
+        indexToTileTypes index `shouldBe` Just (fromTypesUnchecked nw ne sw se)
 
 incorrectSizeImages :: [Image PixelRGB8]
 incorrectSizeImages = [oddWidth, incorrectRatio]
