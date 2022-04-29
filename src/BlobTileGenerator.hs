@@ -10,13 +10,16 @@ module BlobTileGenerator
     , fromTypesUnchecked
     , splitImage
     , fromPartsUnchecked
+    , generateBlobTile
     ) where
 
 import           Codec.Picture       (Image (Image, imageHeight, imageWidth),
-                                      Pixel (PixelBaseComponent))
+                                      Pixel (PixelBaseComponent),
+                                      PixelRGBA8 (PixelRGBA8), generateImage)
 import           Codec.Picture.Extra (below, beside, crop)
 import           Control.Lens        (makeLenses, (^.))
 import           Data.Bits           (Bits (bit, (.&.)))
+import           Data.Maybe          (fromMaybe)
 import           Foreign             (Storable)
 
 data TileType
@@ -176,3 +179,26 @@ isImage1x5Size (Image w h _) = w * 5 == h
 
 isWidthEven :: Image a -> Bool
 isWidthEven (Image w _ _) = even w
+
+minimumPacking :: [[Int]]
+minimumPacking =
+    [ [20, 68, 92, 112, 28, 124, 116, 80]
+    , [21, 84, 87, 221, 127, 255, 241, 17]
+    , [29, 117, 85, 95, 247, 215, 209, 1]
+    , [23, 213, 81, 31, 253, 125, 113, 16]
+    , [5, 69, 93, 119, 223, 255, 245, 65]
+    , [0, 4, 71, 193, 7, 199, 197, 64]
+    ]
+
+generateBlobTile :: Image PixelRGBA8 -> Maybe (Image PixelRGBA8)
+generateBlobTile img =
+    fmap
+        ((below . fmap beside) .
+         (\t1x5 ->
+              fmap
+                  (fmap (fromMaybe emptyImage . indexToTile t1x5))
+                  minimumPacking))
+        (splitImage img)
+  where
+    emptyImage = generateImage (\_ _ -> PixelRGBA8 0 0 0 0) w w
+    w = imageWidth img
