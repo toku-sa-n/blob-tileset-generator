@@ -5,6 +5,7 @@ module BlobTileGenerator
     ( Tile1x5
     , TileType(..)
     , isCorrectSize
+    , indexToTile
     , indexToTileTypes
     , fromTypesUnchecked
     , splitImage
@@ -13,7 +14,7 @@ module BlobTileGenerator
 
 import           Codec.Picture       (Image (Image, imageHeight, imageWidth),
                                       Pixel (PixelBaseComponent))
-import           Codec.Picture.Extra (crop)
+import           Codec.Picture.Extra (below, beside, crop)
 import           Control.Lens        (makeLenses, (^.))
 import           Data.Bits           (Bits (bit, (.&.)))
 import           Foreign             (Storable)
@@ -34,6 +35,14 @@ data Corners a =
         , _southEast :: a
         }
     deriving (Show, Eq)
+
+instance Functor Corners where
+    fmap f c =
+        Corners
+            (f (_northWest c))
+            (f (_northEast c))
+            (f (_southWest c))
+            (f (_southEast c))
 
 type TileTypesOfCorners = Corners TileType
 
@@ -62,6 +71,23 @@ instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
 fromTypesUnchecked ::
        TileType -> TileType -> TileType -> TileType -> TileTypesOfCorners
 fromTypesUnchecked = Corners
+
+indexToTile :: Pixel a => Tile1x5 a -> Int -> Maybe (Image a)
+indexToTile t1x5 index =
+    concatParts . fmap (`typeToImg` t1x5) <$> indexToTileTypes index
+
+concatParts :: Pixel a => Corners (TileSplitIntoFourDirections a) -> Image a
+concatParts (Corners nw ne sw se) = below [upper, lower]
+  where
+    upper = beside [_northWest nw, _northEast ne]
+    lower = beside [_southWest sw, _southEast se]
+
+typeToImg :: TileType -> Tile1x5 a -> TileSplitIntoFourDirections a
+typeToImg NoBorder      = _allConnection
+typeToImg Vertical      = _verticalConnection
+typeToImg Horizontal    = _horizontalConnection
+typeToImg CornerOutside = _noConnection
+typeToImg CornerInside  = _innerCorner
 
 indexToTileTypes :: Int -> Maybe TileTypesOfCorners
 indexToTileTypes index
