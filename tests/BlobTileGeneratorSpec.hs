@@ -77,23 +77,16 @@ testIndexToTile =
         it "returns a Nothing value if the given index is invalid." $
             isNothing $ indexToTile tile1x5Image 334
   where
-    expected = generateImage (\_ _ -> PixelRGB8 0 0 3) 2 2
-    expected2 = generateImage (\_ _ -> PixelRGB8 0 0 4) 2 2
-    expected3 = generateImage (\_ _ -> PixelRGB8 0 0 1) 2 2
-    expected4 =
-        generateImage
-            (\x y ->
-                 PixelRGB8
-                     0
-                     0
-                     (case (x, y) of
-                          (0, 0) -> 1
-                          (1, 0) -> 3
-                          (0, 1) -> 0
-                          (1, 1) -> 2
-                          _      -> undefined))
-            2
-            2
+    tileFromBlue colors = generateImage (specifyColor colors) 2 2
+    specifyColor (nw, _, _, _) 0 0 = PixelRGB8 0 0 nw
+    specifyColor (_, ne, _, _) 1 0 = PixelRGB8 0 0 ne
+    specifyColor (_, _, sw, _) 0 1 = PixelRGB8 0 0 sw
+    specifyColor (_, _, _, se) 1 1 = PixelRGB8 0 0 se
+    specifyColor _ _ _             = error "Out of index."
+    expected = tileFromBlue (3, 3, 3, 3)
+    expected2 = tileFromBlue (4, 4, 4, 4)
+    expected3 = tileFromBlue (1, 1, 1, 1)
+    expected4 = tileFromBlue (1, 3, 0, 2)
     tile1x5Image = fromPartsUnchecked t1 t2 t3 t4 t5
     (t1, t2, t3, t4, t5) =
         case fmap blueToTile [0 .. 4] of
