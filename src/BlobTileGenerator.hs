@@ -29,20 +29,20 @@ data TileType
 
 data Corners a =
     Corners
-        { _northWest :: a
-        , _northEast :: a
-        , _southWest :: a
-        , _southEast :: a
+        { northWest :: a
+        , northEast :: a
+        , southWest :: a
+        , southEast :: a
         }
     deriving (Show, Eq)
 
 instance Functor Corners where
     fmap f c =
         Corners
-            (f (_northWest c))
-            (f (_northEast c))
-            (f (_southWest c))
-            (f (_southEast c))
+            (f (northWest c))
+            (f (northEast c))
+            (f (southWest c))
+            (f (southEast c))
 
 type TileTypesOfCorners = Corners TileType
 
@@ -50,11 +50,11 @@ type TileSplitIntoFourDirections a = Corners (Image a)
 
 data Tile1x5 a =
     Tile1x5
-        { _noConnection         :: TileSplitIntoFourDirections a
-        , _verticalConnection   :: TileSplitIntoFourDirections a
-        , _horizontalConnection :: TileSplitIntoFourDirections a
-        , _innerCorner          :: TileSplitIntoFourDirections a
-        , _allConnection        :: TileSplitIntoFourDirections a
+        { noConnection         :: TileSplitIntoFourDirections a
+        , verticalConnection   :: TileSplitIntoFourDirections a
+        , horizontalConnection :: TileSplitIntoFourDirections a
+        , innerCorner          :: TileSplitIntoFourDirections a
+        , allConnection        :: TileSplitIntoFourDirections a
         }
 
 instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
@@ -63,11 +63,11 @@ instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
         and $
         fmap
             (\x -> x t1 == x t2)
-            [ _noConnection
-            , _verticalConnection
-            , _horizontalConnection
-            , _innerCorner
-            , _allConnection
+            [ noConnection
+            , verticalConnection
+            , horizontalConnection
+            , innerCorner
+            , allConnection
             ]
 
 fromTypesUnchecked ::
@@ -81,15 +81,15 @@ indexToTile t1x5 index =
 concatParts :: Pixel a => Corners (TileSplitIntoFourDirections a) -> Image a
 concatParts (Corners nw ne sw se) = below [upper, lower]
   where
-    upper = beside [_northWest nw, _northEast ne]
-    lower = beside [_southWest sw, _southEast se]
+    upper = beside [northWest nw, northEast ne]
+    lower = beside [southWest sw, southEast se]
 
 typeToImg :: TileType -> Tile1x5 a -> TileSplitIntoFourDirections a
-typeToImg NoBorder      = _allConnection
-typeToImg Vertical      = _verticalConnection
-typeToImg Horizontal    = _horizontalConnection
-typeToImg CornerOutside = _noConnection
-typeToImg CornerInside  = _innerCorner
+typeToImg NoBorder      = allConnection
+typeToImg Vertical      = verticalConnection
+typeToImg Horizontal    = horizontalConnection
+typeToImg CornerOutside = noConnection
+typeToImg CornerInside  = innerCorner
 
 indexToTileTypes :: Int -> Maybe TileTypesOfCorners
 indexToTileTypes index
