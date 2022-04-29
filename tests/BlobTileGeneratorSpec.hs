@@ -77,11 +77,12 @@ testIndexToTile =
         it "returns a Nothing value if the given index is invalid." $
             isNothing $ indexToTile tile1x5Image 334
   where
-    tileFromBlue colors = generateImage (specifyColor colors) 2 2
-    specifyColor (nw, _, _, _) 0 0 = PixelRGB8 0 0 nw
-    specifyColor (_, ne, _, _) 1 0 = PixelRGB8 0 0 ne
-    specifyColor (_, _, sw, _) 0 1 = PixelRGB8 0 0 sw
-    specifyColor (_, _, _, se) 1 1 = PixelRGB8 0 0 se
+    tileFromBlue colors =
+        generateImage (\x -> PixelRGB8 0 0 . specifyColor colors x) 2 2
+    specifyColor (nw, _, _, _) 0 0 = nw
+    specifyColor (_, ne, _, _) 1 0 = ne
+    specifyColor (_, _, sw, _) 0 1 = sw
+    specifyColor (_, _, _, se) 1 1 = se
     specifyColor _ _ _             = error "Out of index."
     expected = tileFromBlue (3, 3, 3, 3)
     expected2 = tileFromBlue (4, 4, 4, 4)
