@@ -14,8 +14,7 @@ module BlobTileGenerator
     ) where
 
 import           Codec.Picture       (Image (Image, imageWidth),
-                                      Pixel (PixelBaseComponent),
-                                      PixelRGBA8 (PixelRGBA8), generateImage)
+                                      Pixel (PixelBaseComponent), PixelRGBA8)
 import           Codec.Picture.Extra (below, beside, crop)
 import           Control.Lens        (makeLenses, (^.))
 import           Data.Bits           (Bits (bit, (.&.)))
@@ -206,15 +205,7 @@ generateBlobTile ::
 generateBlobTile img =
     fmap
         ((below . fmap beside) .
-         (\t1x5 ->
-              fmap
-                  (fmap (fromMaybe emptyImage . indexToTile t1x5))
-                  minimumPacking))
+         (\t1x5 -> fmap (fmap (unwrap . indexToTile t1x5)) minimumPacking))
         (splitImage img)
   where
-    emptyImage =
-        Codec.Picture.generateImage
-            (\_ _ -> Codec.Picture.PixelRGBA8 0 0 0 0)
-            w
-            w
-    w = Codec.Picture.imageWidth img
+    unwrap = fromMaybe (error "Failed to convert an index to a tile.")
