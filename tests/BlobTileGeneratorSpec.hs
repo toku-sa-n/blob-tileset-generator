@@ -4,7 +4,9 @@ module BlobTileGeneratorSpec
     ( spec
     ) where
 
-import           BlobTileGenerator   (fromPartsUnchecked, isCorrectSize,
+import           BlobTileGenerator   (TileType (CornerInside, CornerOutside, Horizontal, NoBorder, Vertical),
+                                      fromPartsUnchecked, fromTypesUnchecked,
+                                      indexToTileTypes, isCorrectSize,
                                       splitImage)
 import           Codec.Picture       (Image, PixelRGB8 (PixelRGB8),
                                       generateImage)
@@ -16,6 +18,7 @@ spec :: Spec
 spec = do
     testIsCorrectSize
     testSplitImage
+    testIndexToTileTypes
 
 testSplitImage :: Spec
 testSplitImage =
@@ -46,6 +49,35 @@ testIsCorrectSize =
     patterns = [(correctSize, True)] <> fmap (, False) incorrectSizeImages
     checkFunc (img, expected) = isCorrectSize img `shouldBe` expected
     correctSize = generateBlackImage 2 10
+
+testIndexToTileTypes :: Spec
+testIndexToTileTypes =
+    describe "indexToTileTypes" $
+    it "returns a Just value containing tile types of each corner" $ do
+        indexToTileTypes 85 `shouldBe`
+            Just
+                (fromTypesUnchecked
+                     CornerInside
+                     CornerInside
+                     CornerInside
+                     CornerInside)
+        indexToTileTypes 255 `shouldBe`
+            Just (fromTypesUnchecked NoBorder NoBorder NoBorder NoBorder)
+        indexToTileTypes 17 `shouldBe`
+            Just (fromTypesUnchecked Vertical Vertical Vertical Vertical)
+        indexToTileTypes 5 `shouldBe`
+            Just
+                (fromTypesUnchecked
+                     Vertical
+                     CornerInside
+                     CornerOutside
+                     Horizontal)
+        indexToTileTypes 68 `shouldBe`
+            Just
+                (fromTypesUnchecked Horizontal Horizontal Horizontal Horizontal)
+        indexToTileTypes 29 `shouldBe`
+            Just (fromTypesUnchecked Vertical CornerInside Vertical NoBorder)
+        indexToTileTypes 334 `shouldBe` Nothing
 
 incorrectSizeImages :: [Image PixelRGB8]
 incorrectSizeImages = [oddWidth, incorrectRatio]
