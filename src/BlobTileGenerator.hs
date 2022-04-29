@@ -13,7 +13,7 @@ module BlobTileGenerator
     , generateBlobTile
     ) where
 
-import           Codec.Picture       (Image (Image, imageHeight, imageWidth),
+import           Codec.Picture       (Image (Image, imageWidth),
                                       Pixel (PixelBaseComponent),
                                       PixelRGBA8 (PixelRGBA8), generateImage)
 import           Codec.Picture.Extra (below, beside, crop)
@@ -49,7 +49,7 @@ instance Functor Corners where
 
 type TileTypesOfCorners = Corners TileType
 
-type TileSplitIntoFourDirections a = Corners (Image a)
+type TileSplitIntoFourDirections a = Corners (Codec.Picture.Image a)
 
 data Tile1x5 a =
     Tile1x5
@@ -62,7 +62,9 @@ data Tile1x5 a =
 
 makeLenses ''Tile1x5
 
-instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
+instance ( Eq (Codec.Picture.PixelBaseComponent a)
+         , Storable (Codec.Picture.PixelBaseComponent a)
+         ) =>
          Eq (Tile1x5 a) where
     t1 == t2 =
         t1 ^. noConnection == t2 ^. noConnection &&
@@ -75,11 +77,18 @@ fromTypesUnchecked ::
        TileType -> TileType -> TileType -> TileType -> TileTypesOfCorners
 fromTypesUnchecked = Corners
 
-indexToTile :: Pixel a => Tile1x5 a -> Int -> Maybe (Image a)
+indexToTile ::
+       Codec.Picture.Pixel a
+    => Tile1x5 a
+    -> Int
+    -> Maybe (Codec.Picture.Image a)
 indexToTile t1x5 index =
     concatParts . fmap (`typeToImg` t1x5) <$> indexToTileTypes index
 
-concatParts :: Pixel a => Corners (TileSplitIntoFourDirections a) -> Image a
+concatParts ::
+       Codec.Picture.Pixel a
+    => Corners (TileSplitIntoFourDirections a)
+    -> Codec.Picture.Image a
 concatParts (Corners nw ne sw se) = below [upper, lower]
   where
     upper = beside [_northWest nw, _northEast ne]
@@ -126,10 +135,11 @@ validIndexes :: [Int]
 validIndexes =
     255 :
     concatMap
-        (\x -> fmap ((`mod` 255) . (* x)) [1 .. 4])
+        (\x -> fmap ((`mod` 255) . (* x)) [1, 4, 16, 64])
         [0, 1, 5, 7, 17, 21, 23, 29, 31, 85, 87, 95, 119, 127]
 
-splitImage :: Pixel a => Image a -> Maybe (Tile1x5 a)
+splitImage ::
+       Codec.Picture.Pixel a => Codec.Picture.Image a -> Maybe (Tile1x5 a)
 splitImage img
     | isCorrectSize img = Just $ fromPartsUnchecked p1 p2 p3 p4 p5
     | otherwise = Nothing
@@ -139,15 +149,15 @@ splitImage img
             [a, b, c, d, e] -> (a, b, c, d, e)
             _               -> error "Unexpected length of list."
     topYCoord = take 5 [0,w ..]
-    w = imageWidth img
+    w = Codec.Picture.imageWidth img
 
 fromPartsUnchecked ::
-       Pixel a
-    => Image a
-    -> Image a
-    -> Image a
-    -> Image a
-    -> Image a
+       Codec.Picture.Pixel a
+    => Codec.Picture.Image a
+    -> Codec.Picture.Image a
+    -> Codec.Picture.Image a
+    -> Codec.Picture.Image a
+    -> Codec.Picture.Image a
     -> Tile1x5 a
 fromPartsUnchecked n v h i a = Tile1x5 n' v' h' i' a'
   where
@@ -158,27 +168,27 @@ fromPartsUnchecked n v h i a = Tile1x5 n' v' h' i' a'
     a' = tileSplitIntoFourDirections a
 
 tileSplitIntoFourDirections ::
-       Pixel a => Image a -> TileSplitIntoFourDirections a
+       Codec.Picture.Pixel a
+    => Codec.Picture.Image a
+    -> TileSplitIntoFourDirections a
 tileSplitIntoFourDirections img = Corners nw ne sw se
   where
     nw = cropToQuarter 0 0
-    ne = cropToQuarter 0 wHalf
-    sw = cropToQuarter hHalf 0
-    se = cropToQuarter hHalf wHalf
-    cropToQuarter x y = crop x y wHalf hHalf img
+    ne = cropToQuarter wHalf 0
+    sw = cropToQuarter 0 wHalf
+    se = cropToQuarter wHalf wHalf
+    cropToQuarter x y = crop x y wHalf wHalf img
     wHalf = w `div` 2
-    hHalf = h `div` 2
-    w = imageWidth img
-    h = imageHeight img
+    w = Codec.Picture.imageWidth img
 
-isCorrectSize :: Image a -> Bool
+isCorrectSize :: Codec.Picture.Image a -> Bool
 isCorrectSize img = isImage1x5Size img && isWidthEven img
 
-isImage1x5Size :: Image a -> Bool
-isImage1x5Size (Image w h _) = w * 5 == h
+isImage1x5Size :: Codec.Picture.Image a -> Bool
+isImage1x5Size (Codec.Picture.Image w h _) = w * 5 == h
 
-isWidthEven :: Image a -> Bool
-isWidthEven (Image w _ _) = even w
+isWidthEven :: Codec.Picture.Image a -> Bool
+isWidthEven (Codec.Picture.Image w _ _) = even w
 
 minimumPacking :: [[Int]]
 minimumPacking =
@@ -190,7 +200,9 @@ minimumPacking =
     , [0, 4, 71, 193, 7, 199, 197, 64]
     ]
 
-generateBlobTile :: Image PixelRGBA8 -> Maybe (Image PixelRGBA8)
+generateBlobTile ::
+       Codec.Picture.Image Codec.Picture.PixelRGBA8
+    -> Maybe (Codec.Picture.Image Codec.Picture.PixelRGBA8)
 generateBlobTile img =
     fmap
         ((below . fmap beside) .
@@ -200,5 +212,9 @@ generateBlobTile img =
                   minimumPacking))
         (splitImage img)
   where
-    emptyImage = generateImage (\_ _ -> PixelRGBA8 0 0 0 0) w w
-    w = imageWidth img
+    emptyImage =
+        Codec.Picture.generateImage
+            (\_ _ -> Codec.Picture.PixelRGBA8 0 0 0 0)
+            w
+            w
+    w = Codec.Picture.imageWidth img
