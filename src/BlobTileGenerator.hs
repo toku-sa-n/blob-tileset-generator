@@ -116,17 +116,13 @@ validIndexes =
 
 splitImage :: Pixel a => Image a -> Maybe (Tile1x5 a)
 splitImage img
-    | isCorrectSize img =
-        Just $
-        fromPartsUnchecked
-            (head parts)
-            (parts !! 1)
-            (parts !! 2)
-            (parts !! 3)
-            (parts !! 4)
+    | isCorrectSize img = Just $ fromPartsUnchecked p1 p2 p3 p4 p5
     | otherwise = Nothing
   where
-    parts = fmap (\y -> crop 0 y w w img) topYCoord
+    (p1, p2, p3, p4, p5) =
+        case fmap (\y -> crop 0 y w w img) topYCoord of
+            [a, b, c, d, e] -> (a, b, c, d, e)
+            _               -> error "Unexpected length of list."
     topYCoord = take 5 [0,w ..]
     w = imageWidth img
 
