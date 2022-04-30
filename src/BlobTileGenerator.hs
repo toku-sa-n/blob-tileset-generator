@@ -12,9 +12,9 @@ import           Data.Maybe          (fromMaybe)
 import           Foreign             (Storable)
 
 data TileType
-    = Horizontal
+    = CornerOutside
     | Vertical
-    | CornerOutside
+    | Horizontal
     | CornerInside
     | NoBorder
     deriving (Show, Eq)
@@ -42,11 +42,11 @@ type TileSplitIntoFourDirections a = Corners (Image a)
 
 data Tile1x5 a =
     Tile1x5
-        { noConnection         :: TileSplitIntoFourDirections a
-        , verticalConnection   :: TileSplitIntoFourDirections a
-        , horizontalConnection :: TileSplitIntoFourDirections a
-        , innerCorner          :: TileSplitIntoFourDirections a
-        , allConnection        :: TileSplitIntoFourDirections a
+        { cornerOutside :: TileSplitIntoFourDirections a
+        , vertical      :: TileSplitIntoFourDirections a
+        , horizontal    :: TileSplitIntoFourDirections a
+        , cornerInside  :: TileSplitIntoFourDirections a
+        , noBorder      :: TileSplitIntoFourDirections a
         }
 
 instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
@@ -55,12 +55,7 @@ instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
         and $
         fmap
             (\x -> x t1 == x t2)
-            [ noConnection
-            , verticalConnection
-            , horizontalConnection
-            , innerCorner
-            , allConnection
-            ]
+            [cornerOutside, vertical, horizontal, cornerInside, noBorder]
 
 generateBlobTile :: Image PixelRGBA8 -> Maybe (Image PixelRGBA8)
 generateBlobTile img =
@@ -85,11 +80,11 @@ concatParts (Corners nw ne sw se) = below [upper, lower]
     lower = beside [southWest sw, southEast se]
 
 typeToImg :: TileType -> Tile1x5 a -> TileSplitIntoFourDirections a
-typeToImg NoBorder      = allConnection
-typeToImg Vertical      = verticalConnection
-typeToImg Horizontal    = horizontalConnection
-typeToImg CornerOutside = noConnection
-typeToImg CornerInside  = innerCorner
+typeToImg NoBorder      = noBorder
+typeToImg Vertical      = vertical
+typeToImg Horizontal    = horizontal
+typeToImg CornerOutside = cornerOutside
+typeToImg CornerInside  = cornerInside
 
 indexToTileTypes :: Int -> Maybe TileTypesOfCorners
 indexToTileTypes index
