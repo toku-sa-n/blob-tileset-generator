@@ -62,6 +62,15 @@ instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
             , allConnection
             ]
 
+generateBlobTile :: Image PixelRGBA8 -> Maybe (Image PixelRGBA8)
+generateBlobTile img =
+    fmap
+        ((below . fmap beside) .
+         (\t1x5 -> fmap (fmap (unwrap . indexToTile t1x5)) minimumPacking))
+        (splitImage img)
+  where
+    unwrap = fromMaybe (error "Failed to convert an index to a tile.")
+
 indexToTile :: Pixel a => Tile1x5 a -> Int -> Maybe (Image a)
 indexToTile t1x5 index =
     concatParts . fmap (`typeToImg` t1x5) <$> indexToTileTypes index
@@ -173,12 +182,3 @@ minimumPacking =
     , [5, 69, 93, 119, 223, 255, 245, 65]
     , [0, 4, 71, 193, 7, 199, 197, 64]
     ]
-
-generateBlobTile :: Image PixelRGBA8 -> Maybe (Image PixelRGBA8)
-generateBlobTile img =
-    fmap
-        ((below . fmap beside) .
-         (\t1x5 -> fmap (fmap (unwrap . indexToTile t1x5)) minimumPacking))
-        (splitImage img)
-  where
-    unwrap = fromMaybe (error "Failed to convert an index to a tile.")
