@@ -61,6 +61,21 @@ generateBlobTile :: Image PixelRGBA8 -> Maybe (Image PixelRGBA8)
 generateBlobTile img =
     fmap (concatenateSplitImages . generateEachTile) (splitImage img)
 
+splitImage :: Pixel a => Image a -> Maybe (Tile1x5 a)
+splitImage img
+    | isCorrectSize img = Just $ splitImageUnchecked img
+    | otherwise = Nothing
+
+splitImageUnchecked :: Pixel a => Image a -> Tile1x5 a
+splitImageUnchecked img = fromPartsUnchecked p1 p2 p3 p4 p5
+  where
+    (p1, p2, p3, p4, p5) =
+        case fmap (\y -> crop 0 y w w img) topYCoord of
+            [a, b, c, d, e] -> (a, b, c, d, e)
+            _               -> error "Unexpected length of list."
+    topYCoord = take 5 [0,w ..]
+    w = imageWidth img
+
 generateEachTile :: Pixel a => Tile1x5 a -> [[Image a]]
 generateEachTile t1x5 = fmap (fmap (unwrap . indexToTile t1x5)) minimumPacking
   where
@@ -124,21 +139,6 @@ validIndexes =
     concatMap
         (\x -> fmap ((`mod` 255) . (* x)) [1, 4, 16, 64])
         [0, 1, 5, 7, 17, 21, 23, 29, 31, 85, 87, 95, 119, 127]
-
-splitImage :: Pixel a => Image a -> Maybe (Tile1x5 a)
-splitImage img
-    | isCorrectSize img = Just $ splitImageUnchecked img
-    | otherwise = Nothing
-
-splitImageUnchecked :: Pixel a => Image a -> Tile1x5 a
-splitImageUnchecked img = fromPartsUnchecked p1 p2 p3 p4 p5
-  where
-    (p1, p2, p3, p4, p5) =
-        case fmap (\y -> crop 0 y w w img) topYCoord of
-            [a, b, c, d, e] -> (a, b, c, d, e)
-            _               -> error "Unexpected length of list."
-    topYCoord = take 5 [0,w ..]
-    w = imageWidth img
 
 fromPartsUnchecked ::
        Pixel a
