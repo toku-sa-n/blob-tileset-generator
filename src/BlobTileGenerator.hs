@@ -70,9 +70,10 @@ splitImageUnchecked :: Pixel a => Image a -> Tile1x5 a
 splitImageUnchecked img = fromPartsUnchecked p1 p2 p3 p4 p5
   where
     (p1, p2, p3, p4, p5) =
-        case fmap (\y -> crop 0 y w w img) topYCoord of
+        case fmap extractTileFrom topYCoord of
             [a, b, c, d, e] -> (a, b, c, d, e)
             _               -> error "Unexpected length of list."
+    extractTileFrom y = crop 0 y w w img
     topYCoord = take 5 [0,w ..]
     w = imageWidth img
 
