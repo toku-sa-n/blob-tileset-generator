@@ -125,8 +125,11 @@ validIndexes =
 
 splitImage :: Pixel a => Image a -> Maybe (Tile1x5 a)
 splitImage img
-    | isCorrectSize img = Just $ fromPartsUnchecked p1 p2 p3 p4 p5
+    | isCorrectSize img = Just $ splitImageUnchecked img
     | otherwise = Nothing
+
+splitImageUnchecked :: Pixel a => Image a -> Tile1x5 a
+splitImageUnchecked img = fromPartsUnchecked p1 p2 p3 p4 p5
   where
     (p1, p2, p3, p4, p5) =
         case fmap (\y -> crop 0 y w w img) topYCoord of
