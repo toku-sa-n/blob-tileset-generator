@@ -1,15 +1,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 module BlobTileGenerator
-    ( Tile1x5
-    , TileType(..)
-    , isCorrectSize
-    , indexToTile
-    , indexToTileTypes
-    , fromTypesUnchecked
-    , splitImage
-    , fromPartsUnchecked
-    , generateBlobTile
+    ( generateBlobTile
     ) where
 
 import           Codec.Picture       (Image (Image, imageWidth),
@@ -69,10 +61,6 @@ instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
             , innerCorner
             , allConnection
             ]
-
-fromTypesUnchecked ::
-       TileType -> TileType -> TileType -> TileType -> TileTypesOfCorners
-fromTypesUnchecked = Corners
 
 indexToTile :: Pixel a => Tile1x5 a -> Int -> Maybe (Image a)
 indexToTile t1x5 index =
