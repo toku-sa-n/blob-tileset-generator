@@ -82,9 +82,6 @@ generateEachTile t1x5 = fmap (fmap (unwrap . indexToTile t1x5)) minimumPacking
   where
     unwrap = fromMaybe (error "Failed to convert an index to a tile.")
 
-concatenateSplitImages :: Pixel a => [[Image a]] -> Image a
-concatenateSplitImages = below . fmap beside
-
 indexToTile :: Pixel a => Tile1x5 a -> Int -> Maybe (Image a)
 indexToTile t1x5 =
     fmap (concatParts . fmap (`typeToImg` t1x5)) . indexToTileTypes
@@ -134,13 +131,6 @@ indexToTileTypesUnchecked index =
     tileExists = fmap ((/= 0) . (index .&.) . bit) ([0 .. 7] <> [0])
     baseIndexes = [0, 2, 4, 6]
 
-validIndexes :: [Int]
-validIndexes =
-    255 :
-    concatMap
-        (\x -> fmap ((`mod` 255) . (* x)) [1, 4, 16, 64])
-        [0, 1, 5, 7, 17, 21, 23, 29, 31, 85, 87, 95, 119, 127]
-
 fromPartsUnchecked ::
        Pixel a
     => Image a
@@ -167,6 +157,9 @@ tileSplitIntoFourDirections img = Corners nw ne sw se
     cropToQuarter x y = crop x y wHalf wHalf img
     wHalf = imageWidth img `div` 2
 
+concatenateSplitImages :: Pixel a => [[Image a]] -> Image a
+concatenateSplitImages = below . fmap beside
+
 isCorrectSize :: Image a -> Bool
 isCorrectSize img = isImage1x5Size img && isWidthEven img
 
@@ -175,6 +168,13 @@ isImage1x5Size (Image w h _) = w * 5 == h
 
 isWidthEven :: Image a -> Bool
 isWidthEven (Image w _ _) = even w
+
+validIndexes :: [Int]
+validIndexes =
+    255 :
+    concatMap
+        (\x -> fmap ((`mod` 255) . (* x)) [1, 4, 16, 64])
+        [0, 1, 5, 7, 17, 21, 23, 29, 31, 85, 87, 95, 119, 127]
 
 minimumPacking :: [[Int]]
 minimumPacking =
