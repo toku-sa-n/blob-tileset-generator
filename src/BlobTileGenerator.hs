@@ -88,17 +88,19 @@ typeToImg CornerInside  = cornerInside
 
 indexToTileTypes :: Int -> Maybe TileTypesOfCorners
 indexToTileTypes index
-    | index `elem` validIndexes =
-        case fmap baseIndexType baseIndexes of
-            [a, b, c, d] ->
-                Just $
-                Corners
-                    (convertHorizontalVertical d)
-                    a
-                    c
-                    (convertHorizontalVertical b)
-            e -> error $ "Unexpected length of list: " <> show e
+    | index `elem` validIndexes = Just $ indexToTileTypesUnchecked index
     | otherwise = Nothing
+
+indexToTileTypesUnchecked :: Int -> TileTypesOfCorners
+indexToTileTypesUnchecked index =
+    case fmap baseIndexType baseIndexes of
+        [a, b, c, d] ->
+            Corners
+                (convertHorizontalVertical d)
+                a
+                c
+                (convertHorizontalVertical b)
+        e -> error $ "Unexpected length of list: " <> show e
   where
     baseIndexType base =
         case ( tileExists !! base
