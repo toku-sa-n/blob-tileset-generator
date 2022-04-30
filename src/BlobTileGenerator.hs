@@ -125,9 +125,6 @@ indexToTileTypesUnchecked index =
             (True, False, True)   -> CornerInside
             (True, True, True)    -> NoBorder
             _                     -> error $ "Unexpected index: " <> show index
-    convertHorizontalVertical Horizontal = Vertical
-    convertHorizontalVertical Vertical   = Horizontal
-    convertHorizontalVertical x          = x
     tileExists = fmap ((/= 0) . (index .&.) . bit) ([0 .. 7] <> [0])
     baseIndexes = [0, 2, 4, 6]
 
@@ -159,6 +156,11 @@ tileSplitIntoFourDirections img = Corners nw ne sw se
 
 concatenateSplitImages :: Pixel a => [[Image a]] -> Image a
 concatenateSplitImages = below . fmap beside
+
+convertHorizontalVertical :: TileType -> TileType
+convertHorizontalVertical Horizontal = Vertical
+convertHorizontalVertical Vertical   = Horizontal
+convertHorizontalVertical x          = x
 
 isCorrectSize :: Image a -> Bool
 isCorrectSize img = isImage1x5Size img && isWidthEven img
