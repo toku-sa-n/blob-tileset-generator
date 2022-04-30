@@ -72,8 +72,8 @@ generateBlobTile img =
     unwrap = fromMaybe (error "Failed to convert an index to a tile.")
 
 indexToTile :: Pixel a => Tile1x5 a -> Int -> Maybe (Image a)
-indexToTile t1x5 index =
-    concatParts . fmap (`typeToImg` t1x5) <$> indexToTileTypes index
+indexToTile t1x5 =
+    fmap (concatParts . fmap (`typeToImg` t1x5)) . indexToTileTypes
 
 concatParts :: Pixel a => Corners (TileSplitIntoFourDirections a) -> Image a
 concatParts (Corners nw ne sw se) = below [upper, lower]
