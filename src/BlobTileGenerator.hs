@@ -164,8 +164,7 @@ tileSplitIntoFourDirections img = Corners nw ne sw se
     sw = cropToQuarter 0 wHalf
     se = cropToQuarter wHalf wHalf
     cropToQuarter x y = crop x y wHalf wHalf img
-    wHalf = w `div` 2
-    w = imageWidth img
+    wHalf = imageWidth img `div` 2
 
 isCorrectSize :: Image a -> Bool
 isCorrectSize img = isImage1x5Size img && isWidthEven img
