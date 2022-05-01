@@ -16,9 +16,9 @@ The 1x5 tile image must satisfy that
 
 |Input|Output|
 |-----|------|
-|![input](https://github.com/toku-sa-n/blob-tile-generator/examples/example_input.png)|![output](https://github.com/toku-sa-n/blob-tile-generator/examples/example_output.png)|
-|![input](https://github.com/toku-sa-n/blob-tile-generator/examples/wall_1x5.png)|![output](https://github.com/toku-sa-n/blob-tile-generator/examples/wall_blob.png)|
+|![input](examples/example_input.png)|![output](examples/example_output.png)|
+|![input](examples/wall_1x5.png)|![output](examples/wall_blob.png)|
 
 ## Licenses
 
-GPL version 3.0. See [LICENSE](https://github.com/toku-sa-n/blob-tile-generator/LICENSE)
+GPL version 3.0. See [LICENSE](LICENSE)
