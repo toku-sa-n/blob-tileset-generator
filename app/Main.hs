@@ -32,7 +32,7 @@ getArgsOrErr = do
         else ExceptT $ return $ Right args
 
 readImageOrErr :: FilePath -> ExceptT String IO (Image PixelRGBA8)
-readImageOrErr path = ExceptT $ fmap convertRGBA8 <$> readImage path
+readImageOrErr = ExceptT . fmap (fmap convertRGBA8) . readImage
 
 generateBlobTileOrErr :: Pixel a => Image a -> ExceptT String IO (Image a)
 generateBlobTileOrErr = ExceptT . return . maybeToRight msg . generateBlobTile
