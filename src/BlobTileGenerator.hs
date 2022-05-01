@@ -5,7 +5,7 @@ module BlobTileGenerator
     ) where
 
 import           Codec.Picture       (Image (Image, imageWidth),
-                                      Pixel (PixelBaseComponent), PixelRGBA8)
+                                      Pixel (PixelBaseComponent))
 import           Codec.Picture.Extra (below, beside, crop)
 import           Data.Bits           (Bits (bit, (.&.)))
 import           Data.Maybe          (fromMaybe)
@@ -57,7 +57,7 @@ instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
             (\x -> x t1 == x t2)
             [cornerOutside, vertical, horizontal, cornerInside, noBorder]
 
-generateBlobTile :: Image PixelRGBA8 -> Maybe (Image PixelRGBA8)
+generateBlobTile :: Pixel a => Image a -> Maybe (Image a)
 generateBlobTile img =
     fmap (concatenateSplitImages . generateEachTile) (splitImage img)
 
