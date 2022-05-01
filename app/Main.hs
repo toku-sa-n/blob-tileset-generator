@@ -12,20 +12,17 @@ main :: IO ()
 main = do
     args <- getArgs
     if null args
-        then do
-            hPutStrLn stderr "Specify a 1x5 tile image file."
-            exitWith (ExitFailure 1)
+        then exit "Specify a 1x5 tile image file."
         else do
             img <- readImage $ head args
             case img of
                 Right x ->
                     case generateBlobTile $ convertRGBA8 x of
                         Just y -> writePng "blob_tile.png" y
-                        Nothing -> do
-                            hPutStrLn
-                                stderr
+                        Nothing ->
+                            exit
                                 "Failed to convert the tile image. Please check the image's size."
-                            exitWith (ExitFailure 1)
-                Left e -> do
-                    hPutStrLn stderr $ "Failed to load an image: " <> e
-                    exitWith (ExitFailure 1)
+                Left e -> exit $ "Failed to load an image: " <> e
+
+exit :: String -> IO ()
+exit msg = hPutStrLn stderr msg >> exitWith (ExitFailure 1)
