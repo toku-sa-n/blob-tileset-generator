@@ -7,7 +7,8 @@ module Main
 import           BlobTileGenerator          (generateBlobTile)
 import           Codec.Picture              (Image, Pixel, PixelRGBA8,
                                              convertRGBA8, readImage, writePng)
-import           Control.Monad.Trans.Except (ExceptT (ExceptT), runExceptT)
+import           Control.Monad.Trans.Except (ExceptT (ExceptT), except,
+                                             runExceptT)
 import           Data.Either.Combinators    (maybeToRight)
 import           Options.Applicative        (Parser, ParserInfo, execParser,
                                              fullDesc, header, help, helper,
@@ -58,7 +59,7 @@ readImageOrErr :: FilePath -> ExceptT String IO (Image PixelRGBA8)
 readImageOrErr = ExceptT . fmap (fmap convertRGBA8) . readImage
 
 generateBlobTileOrErr :: Pixel a => Image a -> ExceptT String IO (Image a)
-generateBlobTileOrErr = ExceptT . return . maybeToRight msg . generateBlobTile
+generateBlobTileOrErr = except . maybeToRight msg . generateBlobTile
   where
     msg = "Failed to convert the tile image. Please check the image's size."
 
