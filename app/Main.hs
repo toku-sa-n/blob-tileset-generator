@@ -4,7 +4,7 @@ module Main
     ( main
     ) where
 
-import           BlobTileGenerator          (generateBlobTile)
+import           BlobTilesetGenerator       (generateBlobTileset)
 import           Codec.Picture              (Image, Pixel, PixelRGBA8,
                                              convertRGBA8, readImage, writePng)
 import           Control.Monad.Trans.Except (ExceptT (ExceptT), except,
@@ -59,7 +59,7 @@ readImageOrErr :: FilePath -> ExceptT String IO (Image PixelRGBA8)
 readImageOrErr = ExceptT . fmap (fmap convertRGBA8) . readImage
 
 generateBlobTilesetOrErr :: Pixel a => Image a -> ExceptT String IO (Image a)
-generateBlobTilesetOrErr = except . maybeToRight msg . generateBlobTile
+generateBlobTilesetOrErr = except . maybeToRight msg . generateBlobTileset
   where
     msg = "Failed to convert the tileset image. Please check the image's size."
 
