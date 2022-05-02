@@ -1,14 +1,14 @@
-# blob-tile-generator
+# Blob tileset generator
 
-A program to generate a blob tile from 1x5 image.
+A program to generate a [blob tileset](http://www.cr31.co.uk/stagecast/wang/blob.html) from a 1x5 tileset image. You can create a map with the generated blob tileset using [Tiled](https://www.mapeditor.org/).
 
 ## Usage
 
 ```
-cabal run blob-tile-generator.cabal -- <1x5 tile image path>
+cabal run blob-tileset-generator.cabal -- <1x5 tileset image path>
 ```
 
-The 1x5 tile image must satisfy that
+The 1x5 tileset image must satisfy that
 - `width * 5 == height`.
 - width is even.
 
