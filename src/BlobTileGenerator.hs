@@ -1,5 +1,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 
+{-| Blob tileset generator.
+-}
 module BlobTileGenerator
     ( generateBlobTile
     ) where
@@ -57,6 +59,15 @@ instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
             (\x -> x t1 == x t2)
             [cornerOutside, vertical, horizontal, cornerInside, noBorder]
 
+-- | Generate a complete blob tile set with the given 1x5 tileset image.
+--
+-- The 1x5 tileset image must satisfy them:
+--
+-- * Its width must be even.
+-- * Its height must be five times as large as its width.
+--
+-- This function returns `Nothing` if the given 1x5 tileset image does not
+-- satisfy the requirements above.
 generateBlobTile :: Pixel a => Image a -> Maybe (Image a)
 generateBlobTile img =
     fmap (concatenateSplitImages . generateEachTile) (splitImage img)
