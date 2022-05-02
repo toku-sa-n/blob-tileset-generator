@@ -38,5 +38,6 @@ executable blob-tile-generator
     import:             common
     main-is:            Main.hs
     build-depends:      blob-tile-generator
+                      , optparse-applicative >= 0.17.0.0 && < 0.18
     hs-source-dirs:     app
     default-language:   Haskell2010

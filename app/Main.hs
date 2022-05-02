@@ -9,27 +9,50 @@ import           Codec.Picture              (Image, Pixel, PixelRGBA8,
                                              convertRGBA8, readImage, writePng)
 import           Control.Monad.Trans.Except (ExceptT (ExceptT), runExceptT)
 import           Data.Either.Combinators    (maybeToRight)
-import           System.Environment         (getArgs)
+import           Options.Applicative        (Parser, ParserInfo, execParser,
+                                             fullDesc, header, help, helper,
+                                             info, long, metavar, progDesc,
+                                             short, showDefault, strArgument,
+                                             strOption, value, (<**>))
 import           System.Exit                (ExitCode (ExitFailure), exitWith)
 import           System.IO                  (hPutStrLn, stderr)
 
+data Argument =
+    Argument
+        { output :: FilePath
+        , input  :: FilePath
+        }
+
 main :: IO ()
 main =
-    runExceptT runOrErr >>= \case
+    execParser parserInfo >>= runExceptT . runOrErr >>= \case
         Right () -> return ()
         Left e   -> exitWithErrMsg e
 
-runOrErr :: ExceptT String IO ()
-runOrErr =
-    getArgsOrErr >>= readImageOrErr . head >>= generateBlobTileOrErr >>=
-    ExceptT . fmap Right . writePng "blob_tile.png"
+parserInfo :: ParserInfo Argument
+parserInfo =
+    info
+        (argumentParser <**> helper)
+        (fullDesc <>
+         progDesc
+             "Convert a 1x5 tile image specified as FILE and generate the blob tile image to TARGET" <>
+         header
+             "blob-tile-generator - Convert a 1x5 tile imager to the blob tile one.")
 
-getArgsOrErr :: ExceptT String IO [String]
-getArgsOrErr = do
-    args <- ExceptT $ fmap Right getArgs
-    if null args
-        then ExceptT $ return $ Left "Specify a 1x5 tile image file path."
-        else ExceptT $ return $ Right args
+argumentParser :: Parser Argument
+argumentParser =
+    Argument <$>
+    strOption
+        (long "output" <>
+         short 'o' <>
+         metavar "TARGET" <>
+         showDefault <> value "blob_tile.png" <> help "Output to <TARGET>") <*>
+    strArgument (metavar "FILE")
+
+runOrErr :: Argument -> ExceptT String IO ()
+runOrErr arg =
+    readImageOrErr (input arg) >>= generateBlobTileOrErr >>=
+    ExceptT . fmap Right . writePng (output arg)
 
 readImageOrErr :: FilePath -> ExceptT String IO (Image PixelRGBA8)
 readImageOrErr = ExceptT . fmap (fmap convertRGBA8) . readImage
