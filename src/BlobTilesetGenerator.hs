@@ -2,8 +2,8 @@
 
 {-| Blob tileset generator.
 -}
-module BlobTileGenerator
-    ( generateBlobTile
+module BlobTilesetGenerator
+    ( generateBlobTileset
     ) where
 
 import           Codec.Picture       (Image (Image, imageWidth),
@@ -59,7 +59,7 @@ instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
             (\x -> x t1 == x t2)
             [cornerOutside, vertical, horizontal, cornerInside, noBorder]
 
--- | Generate a complete blob tile set with the given 1x5 tileset image.
+-- | Generate a complete blob tileset with the given 1x5 tileset image.
 --
 -- The 1x5 tileset image must satisfy them:
 --
@@ -68,8 +68,8 @@ instance (Eq (PixelBaseComponent a), Storable (PixelBaseComponent a)) =>
 --
 -- This function returns `Nothing` if the given 1x5 tileset image does not
 -- satisfy the requirements above.
-generateBlobTile :: Pixel a => Image a -> Maybe (Image a)
-generateBlobTile img =
+generateBlobTileset :: Pixel a => Image a -> Maybe (Image a)
+generateBlobTileset img =
     fmap (concatenateSplitImages . generateEachTile) (splitImage img)
 
 splitImage :: Pixel a => Image a -> Maybe (Tile1x5 a)
