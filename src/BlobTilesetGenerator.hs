@@ -123,7 +123,7 @@ indexToTileTypes index
 -- - Edge X's right edge (weight is 4w)
 --
 -- From these weights, this function determines the tile types in the four
--- corners.
+-- corners with `baseIndexType`.
 -- Note that this function interchanges the tile types Horizontal and
 -- Vertical in the northwest and southeast corners because these tiles use
 -- the vertical edges to calculate their tile types.
