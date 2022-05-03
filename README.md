@@ -1,6 +1,6 @@
 # Blob tileset generator
 
-A program to generate a [blob tileset](http://www.cr31.co.uk/stagecast/wang/blob.html) from a 1x5 tileset image. You can create a map with the generated blob tileset using [Tiled](https://www.mapeditor.org/).
+Blob tileset generator generates a [blob tileset](http://www.cr31.co.uk/stagecast/wang/blob.html) from a 1x5 tileset image. You can create a map with the generated blob tileset using [Tiled](https://www.mapeditor.org/).
 
 ## Usage
 
@@ -27,4 +27,4 @@ For the available options, see `cabal run blob-tileset-generator.cabal -- --help
 
 ## Licenses
 
-GPL version 3.0. See [LICENSE](LICENSE)
+All files in this repository are licensed under The 3-Clause BSD License. See [LICENSE](LICENSE) for the full license texts.
