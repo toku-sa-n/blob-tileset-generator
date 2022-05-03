@@ -1,16 +1,24 @@
-cabal-version:      2.4
 name:               blob-tileset-generator
 version:            0.1.0.0
-
+cabal-version:      2.4
+build-type:         Simple
+license:            BSD-3-Clause
+license-file:       LICENSE
+copyright:          (c) 2022 Hiroki Tokunaga
 author:             Hiroki Tokunaga
 maintainer:         tokusan441@gmail.com
+homepage:           https://github.com/toku-sa-n/blob-tileset-generator
+bug-reports:        https://github.com/toku-sa-n/blob-tileset-generator/issues
+synopsis:           A program to generate a blob tileset from a 1x5 tileset
+description:        Blob tileset generator generates a [blob tileset](http://www.cr31.co.uk/stagecast/wang/blob.html) from a 1x5 tileset image. You can create a map with the generated blob tileset using [Tiled](https://www.mapeditor.org/).
+category:           Game
 
 extra-source-files:
     CHANGELOG.md
     README.md
 
 common common
-    build-depends:  base >= 4.14.3 && < 4.15
+    build-depends:  base >= 4.14.3 && <= 4.16.1.0
                   , either >= 5.0.1.1 && < 5.1
                   , lens >= 5.1 && < 5.2
                   , JuicyPixels >= 3.3.7 && < 3.4
