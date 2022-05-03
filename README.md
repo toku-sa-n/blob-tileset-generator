@@ -12,6 +12,8 @@ The 1x5 tileset image must satisfy that
 - `width * 5 == height`.
 - width is even.
 
+For the available options, see `cabal run blob-tileset-generator.cabal -- --help`.
+
 ## Examples
 
 |Input|Output|
