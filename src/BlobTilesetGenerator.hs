@@ -1,6 +1,15 @@
 {-# LANGUAGE UndecidableInstances #-}
 
-{-| Blob tileset generator.
+{-|
+Module      :   BlobTilesetGenerator
+Description :   A module containing a blob tile generation function.
+Copyright   :   (c) Hiroki Tokunaga, 2022
+License     :   BSD-3-Clause
+Maintainer  :   tokusan441@gmail.com
+Stability   :   experimental
+Portability :   non-portable
+
+A module containing a blob tile generation function.
 -}
 module BlobTilesetGenerator
     ( generateBlobTileset
