@@ -115,6 +115,18 @@ indexToTileTypes index
     | index `elem` validIndexes = Just $ indexToTileTypesUnchecked index
     | otherwise = Nothing
 
+-- This function processes four edges of a tile in turn. For an edge X,
+-- this function uses the following edges and corners.
+--
+-- - Edge X (take w for its weight)
+-- - Edge X's right corner (weight is 2w)
+-- - Edge X's right edge (weight is 4w)
+--
+-- From these weights, this function determines the tile types in the four
+-- corners.
+-- Note that this function interchanges the tile types Horizontal and
+-- Vertical in the northwest and southeast corners because these tiles use
+-- the vertical edges to calculate their tile types.
 indexToTileTypesUnchecked :: Int -> TileTypesOfCorners
 indexToTileTypesUnchecked index =
     case fmap baseIndexType baseIndexes of
