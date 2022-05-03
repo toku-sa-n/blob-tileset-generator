@@ -14,7 +14,6 @@ jobs:
         sys:
         - { os: ubuntu-latest, shell: bash }
         - { os: windows-latest, shell: 'msys2 {0}' }
-        ghc: ['8.10.7', '9.0.1', '9.0.2', '9.2.1', '9.2.2']
 
     runs-on: ${{ matrix.sys.os }}
 
@@ -34,7 +33,7 @@ jobs:
     - uses: haskell/actions/setup@v1
       id: haskell_setup
       with:
-        ghc-version: ${{ matrix.ghc }}
+        ghc-version: '8.10.7'
         cabal-version: '3.6.0.0'
 
     # Adding a path to msys2's PATH on GitHub Actions is pretty troublesome. So I'll output the path to a file.
@@ -63,8 +62,8 @@ jobs:
           ~/.cabal/packages
           ~/.cabal/store
           dist-newstyle
-        key: ${{ runner.os }}-${{ matrix.ghc }}-${{ hashFiles('cabal.project.freeze') }}-${{ github.sha }}
-        restore-keys: ${{ runner.os }}-${{ matrix.ghc }}-${{ hashFiles('cabal.project.freeze') }}
+        key: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}-${{ github.sha }}
+        restore-keys: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}
 
     - name: Update Cabal
       run: ./cabal.sh update
