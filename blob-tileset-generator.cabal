@@ -1,0 +1,54 @@
+cabal-version:      2.4
+name:               blob-tileset-generator
+version:            0.1.0.0
+build-type:         Simple
+license:            BSD-3-Clause
+license-file:       LICENSE
+copyright:          (c) 2022 Hiroki Tokunaga
+author:             Hiroki Tokunaga
+maintainer:         tokusan441@gmail.com
+stability:          experimental
+homepage:           https://github.com/toku-sa-n/blob-tileset-generator
+bug-reports:        https://github.com/toku-sa-n/blob-tileset-generator/issues
+synopsis:           A program to generate a blob tileset from a 1x5 tileset
+description:        Blob tileset generator generates a [blob tileset](http://www.cr31.co.uk/stagecast/wang/blob.html) from a 1x5 tileset image. You can create a map with the generated tileset using [Tiled](https://www.mapeditor.org/).
+category:           Game
+tested-with:        GHC == 8.10.7
+
+extra-source-files:
+    CHANGELOG.md
+    README.md
+    examples/*.png
+
+common common
+    build-depends:  base >= 4.14.3 && <= 4.15
+                  , either >= 5.0.1.1 && < 5.1
+                  , lens >= 5.1 && < 5.2
+                  , JuicyPixels >= 3.3.7 && < 3.4
+                  , JuicyPixels-extra >= 0.5.2 && < 0.6
+                  , transformers >= 0.5.6.2 && < 0.6
+    ghc-options:    -Wall -Werror
+
+Test-Suite spec
+    import:             common
+    type:               exitcode-stdio-1.0
+    main-is:            Main.hs
+    other-modules:      BlobTilesetGeneratorSpec
+    build-depends:      blob-tileset-generator
+                      , hspec >= 2.9.1 && < 2.10
+    hs-source-dirs:     tests
+    default-Language:   Haskell2010
+
+library
+    import:             common
+    hs-source-dirs:     src
+    exposed-modules:    BlobTilesetGenerator
+    default-language:   Haskell2010
+
+executable blob-tileset-generator
+    import:             common
+    main-is:            Main.hs
+    build-depends:      blob-tileset-generator
+                      , optparse-applicative >= 0.17.0.0 && < 0.18
+    hs-source-dirs:     app
+    default-language:   Haskell2010
