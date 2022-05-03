@@ -15,7 +15,6 @@ jobs:
         - { os: ubuntu-latest, shell: bash }
         - { os: windows-latest, shell: 'msys2 {0}' }
         ghc: ['8.10.7', '9.0.1', '9.0.2', '9.2.1', '9.2.2']
-        cabal: ['3.6.0.0', '3.6.2.0']
 
     runs-on: ${{ matrix.sys.os }}
 
@@ -36,7 +35,7 @@ jobs:
       id: haskell_setup
       with:
         ghc-version: ${{ matrix.ghc }}
-        cabal-version: ${{ matrix.cabal }}
+        cabal-version: '3.6.0.0'
 
     # Adding a path to msys2's PATH on GitHub Actions is pretty troublesome. So I'll output the path to a file.
     # (See https://github.com/msys2/setup-msys2/issues/98 to how to add a path to PATH.)
