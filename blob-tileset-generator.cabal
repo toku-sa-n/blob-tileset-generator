@@ -12,6 +12,7 @@ bug-reports:        https://github.com/toku-sa-n/blob-tileset-generator/issues
 synopsis:           A program to generate a blob tileset from a 1x5 tileset
 description:        Blob tileset generator generates a [blob tileset](http://www.cr31.co.uk/stagecast/wang/blob.html) from a 1x5 tileset image. You can create a map with the generated blob tileset using [Tiled](https://www.mapeditor.org/).
 category:           Game
+tested-with:        GHC == 8.10.7
 
 extra-source-files:
     CHANGELOG.md
