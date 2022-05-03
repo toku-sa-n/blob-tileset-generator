@@ -1,10 +1,10 @@
 # Blob tileset generator
 
-Blob tileset generator generates a [blob tileset](http://www.cr31.co.uk/stagecast/wang/blob.html) from a 1x5 tileset image. You can create a map with the generated blob tileset using [Tiled](https://www.mapeditor.org/).
+Blob tileset generator generates a [blob tileset](http://www.cr31.co.uk/stagecast/wang/blob.html) from a 1x5 tileset image. You can create a map with the generated tileset using [Tiled](https://www.mapeditor.org/).
 
 ## Usage
 
-Prepare a 1x5 tileset image. Refer to [Wolf RPG Editor's FAQ](https://www.silversecond.com/WolfRPGEditor/Guide/MAKEMAT_004.html) for how each tile is used. Note that Blob tileset generator does not support animation tiles while Wolf RPG Editor does.
+Prepare a 1x5 tileset image. Refer to [Wolf RPG Editor's FAQ](https://www.silversecond.com/WolfRPGEditor/Guide/MAKEMAT_004.html) for how each tile is used. Note that Blob tileset generator does not support animation tilesets while Wolf RPG Editor does.
 
 The 1x5 tileset image must satisfy that
 - `width * 5 == height`.
