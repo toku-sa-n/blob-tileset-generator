@@ -139,16 +139,16 @@ indexToTileTypesUnchecked index =
         e -> error $ "Unexpected length of list: " <> show e
   where
     baseIndexType base =
-        case ( tileExists !! base
-             , tileExists !! (base + 1)
-             , tileExists !! (base + 2)) of
+        case ( weightConsists !! base
+             , weightConsists !! (base + 1)
+             , weightConsists !! (base + 2)) of
             (False, False, False) -> CornerOutside
             (True, False, False)  -> Vertical
             (False, False, True)  -> Horizontal
             (True, False, True)   -> CornerInside
             (True, True, True)    -> NoBorder
             _                     -> error $ "Unexpected index: " <> show index
-    tileExists = fmap ((/= 0) . (index .&.) . bit) ([0 .. 7] <> [0])
+    weightConsists = fmap ((/= 0) . (index .&.) . bit) ([0 .. 7] <> [0])
     baseIndexes = [0, 2, 4, 6]
 
 fromPartsUnchecked ::
