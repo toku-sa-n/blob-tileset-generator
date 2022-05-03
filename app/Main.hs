@@ -4,19 +4,23 @@ module Main
     ( main
     ) where
 
-import           BlobTilesetGenerator       (generateBlobTileset)
-import           Codec.Picture              (Image, Pixel, PixelRGBA8,
-                                             convertRGBA8, readImage, writePng)
-import           Control.Monad.Trans.Except (ExceptT (ExceptT), except,
-                                             runExceptT)
-import           Data.Either.Combinators    (maybeToRight)
-import           Options.Applicative        (Parser, ParserInfo, execParser,
-                                             fullDesc, header, help, helper,
-                                             info, long, metavar, progDesc,
-                                             short, showDefault, strArgument,
-                                             strOption, value, (<**>))
-import           System.Exit                (ExitCode (ExitFailure), exitWith)
-import           System.IO                  (hPutStrLn, stderr)
+import           BlobTilesetGenerator         (generateBlobTileset)
+import           Codec.Picture                (Image, Pixel, PixelRGBA8,
+                                               convertRGBA8, readImage,
+                                               writePng)
+import           Control.Monad.Trans.Except   (ExceptT (ExceptT), except,
+                                               runExceptT)
+import           Data.Either.Combinators      (maybeToRight)
+import           Data.Version                 (showVersion)
+import           Options.Applicative          (Parser, ParserInfo, execParser,
+                                               fullDesc, header, help, helper,
+                                               hidden, info, infoOption, long,
+                                               metavar, progDesc, short,
+                                               showDefault, strArgument,
+                                               strOption, value, (<**>))
+import           Paths_blob_tileset_generator (version)
+import           System.Exit                  (ExitCode (ExitFailure), exitWith)
+import           System.IO                    (hPutStrLn, stderr)
 
 data Argument =
     Argument
@@ -33,7 +37,7 @@ main =
 parserInfo :: ParserInfo Argument
 parserInfo =
     info
-        (argumentParser <**> helper)
+        (argumentParser <**> helper <**> versioner)
         (fullDesc <>
          progDesc
              "Convert a 1x5 tileset image specified as FILE and generate the blob tileset image to TARGET" <>
@@ -49,6 +53,15 @@ argumentParser =
          metavar "TARGET" <>
          showDefault <> value "blob_tileset.png" <> help "Output to <TARGET>") <*>
     strArgument (metavar "FILE")
+
+-- This function is from the `optparse-applicative`s wiki.
+-- See https://github.com/pcapriotti/optparse-applicative/wiki/Version-Options.
+-- Refer to `LICENSE_optparse-applicative` for the function's license.
+versioner :: Parser (a -> a)
+versioner =
+    infoOption
+        (showVersion version)
+        (long "version" <> help "Show version" <> hidden)
 
 runOrErr :: Argument -> ExceptT String IO ()
 runOrErr arg =

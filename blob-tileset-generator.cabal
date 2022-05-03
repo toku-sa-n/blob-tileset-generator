@@ -18,6 +18,7 @@ tested-with:        GHC == 8.10.7
 extra-source-files:
     CHANGELOG.md
     README.md
+    LICENSE_optparse-applicative
     examples/*.png
 
 common common
@@ -50,5 +51,6 @@ executable blob-tileset-generator
     main-is:            Main.hs
     build-depends:      blob-tileset-generator
                       , optparse-applicative >= 0.17.0.0 && < 0.18
+    other-modules:      Paths_blob_tileset_generator
     hs-source-dirs:     app
     default-language:   Haskell2010
