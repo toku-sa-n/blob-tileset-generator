@@ -7,6 +7,7 @@ license-file:       LICENSE
 copyright:          (c) 2022 Hiroki Tokunaga
 author:             Hiroki Tokunaga
 maintainer:         tokusan441@gmail.com
+stability:          experimental
 homepage:           https://github.com/toku-sa-n/blob-tileset-generator
 bug-reports:        https://github.com/toku-sa-n/blob-tileset-generator/issues
 synopsis:           A program to generate a blob tileset from a 1x5 tileset
